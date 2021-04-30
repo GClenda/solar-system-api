@@ -33,5 +33,14 @@ def all_planets():
 
     return jsonify(planets_response)
 
+@planets_bp.route("/<planet_id>", methods=["GET"], strict_slashes=False)
 
-    
+def get_one_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+
+    return ({
+        "id": planet.id,
+        "name": planet.name,
+        "description": planet.description,
+        "diameter": planet.diameter
+    })
