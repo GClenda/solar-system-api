@@ -33,14 +33,38 @@ def all_planets():
 
     return jsonify(planets_response)
 
-@planets_bp.route("/<planet_id>", methods=["GET"], strict_slashes=False)
+@planets_bp.route("/<planet_id>", methods=["GET", "PUT", "DELETE"], strict_slashes=False)
 
-def get_one_planet(planet_id):
+def manage_planet(planet_id):
     planet = Planet.query.get(planet_id)
 
-    return ({
-        "id": planet.id,
-        "name": planet.name,
-        "description": planet.description,
-        "diameter": planet.diameter
-    })
+    if planet is None:
+        return ({
+        "message": f"Planet with id {planet_id} was not found",
+        "success": False,
+    }, 404)
+
+    if request.method == "GET":
+
+        return ({
+            "id": planet.id,
+            "name": planet.name,
+            "description": planet.description,
+            "diameter": planet.diameter
+        }, 200)
+
+    elif request.method == "PUT":
+        form_data = request.get_json()
+
+        planet.name = form_data["name"]
+        planet.description = form_data["description"]
+        planet.diameter = form_data["diameter"]
+
+        db.session.commit()
+
+        return make_response(f"Planet #{planet.id} successfully updated")
+
+    elif request.method == "DELETE":
+        db.session.delete(planet)
+        db.session.commit()
+        return make_response(f"Planet #{planet.id} successfully deleted")
