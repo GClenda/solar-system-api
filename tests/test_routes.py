@@ -52,15 +52,14 @@ def test_get_all_planets_return_valid_data(client,two_saved_planets):
 
 def test_post_planet_data_return_201(client):
     # Act
-    request = client.post("/planets")
-    request_body = resquest.get_json({
-        "id": 2,
-        "name":"Venus",
-        "description": "Venus is the second planet from the Sun. It is named after the Roman goddess of love and beauty",
-        "diameter": 12104
+    response = client.post("/planets",  json={
+        "name":"Mars",
+        "description": "Mars is the fourth planet from the Sun and the second-smallest planet in the Solar System",
+        "diameter": 6787
     })
-    
+    response_body = response.get_json()
+
     # Assert
     assert response.status_code == 201
-    # assert response_body == []
+    assert response_body == "Planet Mars successfully created"
     
